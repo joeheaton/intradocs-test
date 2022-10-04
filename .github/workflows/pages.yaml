@@ -31,7 +31,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: joeheaton/intradocs
-          path: /tmp/intradocs
+          path: ${RUNNER_TEMP}/intradocs
 
       - name: Setup Hugo 🧪
         uses: peaceiris/actions-hugo@v2
@@ -58,8 +58,8 @@ jobs:
 
       - name: Build 🔨
         run: |          
-          cp -r blog/ community/ docs/ /tmp/intradocs/content/en/
-          cd /tmp/intradocs
+          cp -r blog/ community/ docs/ ${RUNNER_TEMP}/intradocs/content/en/
+          cd ${RUNNER_TEMP}/intradocs
           hugo
 
       - name: Deploy 🚚
@@ -67,5 +67,5 @@ jobs:
         if: ${{ github.ref == 'refs/heads/main' }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: /tmp/intradocs/public
+          publish_dir: ${RUNNER_TEMP}/intradocs/public
 
