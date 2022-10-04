@@ -31,7 +31,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: joeheaton/intradocs
-          path: ${RUNNER_TEMP}/intradocs
+          path: ${{ runner.temp }}/intradocs
 
       - name: Setup Hugo 🧪
         uses: peaceiris/actions-hugo@v2
@@ -44,11 +44,11 @@ jobs:
         with:
           node-version: '16'
           cache: 'npm'
-          cache-dependency-path: '${RUNNER_TEMP}/intradocs/package-lock.json'
+          cache-dependency-path: '${{ runner.temp }}/intradocs/package-lock.json'
 
       - name: Install Node packages 🧪
         run: |
-          cd ${RUNNER_TEMP}/intradocs
+          cd ${{ runner.temp }}/intradocs
           npm ci
 
       - name: Cache Hugo modules 📦
@@ -61,8 +61,8 @@ jobs:
 
       - name: Build 🔨
         run: |          
-          cp -r blog/ community/ docs/ ${RUNNER_TEMP}/intradocs/content/en/
-          cd ${RUNNER_TEMP}/intradocs
+          cp -r blog/ community/ docs/ ${{ runner.temp }}/intradocs/content/en/
+          cd ${{ runner.temp }}/intradocs
           hugo
 
       - name: Deploy 🚚
@@ -70,5 +70,5 @@ jobs:
         if: ${{ github.ref == 'refs/heads/main' }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ${RUNNER_TEMP}/intradocs/public
+          publish_dir: ${{ runner.temp }}/intradocs/public
 
