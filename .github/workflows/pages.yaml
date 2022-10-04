@@ -44,6 +44,7 @@ jobs:
         with:
           node-version: '16'
           cache: 'npm'
+          cache-dependency-path: '${RUNNER_TEMP}/intradocs/package-lock.json'
 
       - name: Install Node packages 🧪
         run: npm ci
