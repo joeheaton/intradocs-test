@@ -31,7 +31,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: joeheaton/intradocs
-          path: ${RUNNER_TEMP}/intradocs
+          path: intradocs.${GITHUB_SHA}
 
       - name: Setup Hugo 🧪
         uses: peaceiris/actions-hugo@v2
@@ -44,11 +44,11 @@ jobs:
         with:
           node-version: '16'
           cache: 'npm'
-          cache-dependency-path: '${RUNNER_TEMP}/intradocs/package-lock.json'
+          cache-dependency-path: 'intradocs.${GITHUB_SHA}/package-lock.json'
 
       - name: Install Node packages 🧪
         run: |
-          cd ${{ runner.temp }}/intradocs
+          cd intradocs.${GITHUB_SHA}
           npm ci
 
       - name: Cache Hugo modules 📦
@@ -62,7 +62,7 @@ jobs:
       - name: Build 🔨
         run: |          
           cp -r blog/ community/ docs/ ${{ runner.temp }}/intradocs/content/en/
-          cd ${{ runner.temp }}/intradocs
+          cd intradocs.${GITHUB_SHA}
           hugo
 
       - name: Deploy 🚚
@@ -70,5 +70,5 @@ jobs:
         if: ${{ github.ref == 'refs/heads/main' }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ${RUNNER_TEMP}/intradocs/public
+          publish_dir: intradocs.${GITHUB_SHA}/public
 
