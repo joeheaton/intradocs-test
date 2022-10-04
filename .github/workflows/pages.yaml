@@ -1,0 +1,71 @@
+---
+name: GitHub pages
+
+# Build on merge/commit to main branch
+on:
+  pull_request:
+    branches:
+      - main
+      - master
+  push:
+    branches:
+      - main
+      - master
+    paths-ignore:
+      - 'README.md'
+  # Enable manual trigger
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+    steps:
+      - name: Checkout repo 🥣
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
+
+      - name: Checkout Intradocs repo 🥣
+        uses: actions/checkout@v3
+        with:
+          repository: joeheaton/intradocs
+          path: /tmp/intradocs
+
+      - name: Setup Hugo 🧪
+        uses: peaceiris/actions-hugo@v2
+        with:
+          hugo-version: '0.100.2'
+          extended: true
+
+      - name: Setup Node 🧪
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'npm'
+
+      - name: Install Node packages 🧪
+        run: npm ci
+
+      - name: Cache Hugo modules 📦
+        uses: actions/cache@v2
+        with:
+          path: /tmp/hugo_cache
+          key: ${{ runner.os }}-hugomod-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-hugomod-
+
+      - name: Build 🔨
+        run: |          
+          cp -r blog/ community/ docs/ /tmp/intradocs/content/en/
+          cd /tmp/intradocs
+          hugo
+
+      - name: Deploy 🚚
+        uses: peaceiris/actions-gh-pages@v3
+        if: ${{ github.ref == 'refs/heads/main' }}
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: /tmp/intradocs/public
+
