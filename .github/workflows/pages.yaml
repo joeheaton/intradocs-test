@@ -48,6 +48,9 @@ jobs:
 
       - name: Install Node packages 🧪
         run: |
+          echo "Working directory: $(pwd)"
+          ls
+
           cd intradocs.${GITHUB_SHA}
           npm ci
 
@@ -60,7 +63,10 @@ jobs:
             ${{ runner.os }}-hugomod-
 
       - name: Build 🔨
-        run: |          
+        run: |
+          echo "Working directory: $(pwd)"
+          ls
+          
           cp -r blog/ community/ docs/ ${{ runner.temp }}/intradocs/content/en/
           cd intradocs.${GITHUB_SHA}
           hugo
