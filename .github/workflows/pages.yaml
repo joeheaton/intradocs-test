@@ -51,7 +51,7 @@ jobs:
           echo "Working directory: $(pwd)"
           ls
 
-          cd intradocs.${GITHUB_SHA}
+          cd ../intradocs.${GITHUB_SHA}
           npm ci
 
       - name: Cache Hugo modules 📦
